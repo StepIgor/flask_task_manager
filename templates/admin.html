@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Главная страница | Менеджер Задач</title>
+		<link rel='shortcut icon' href='templates/favicon.png' type='image/png'>
+		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+		<style>
+			.tabs .tab a{ 
+			color:#01579b; 
+			} /*Black color to the text*/ 
+			
+			.tabs .tab a:focus, .tabs .tab a:focus.active{
+			background-color:#b3e5fc;
+			}
+			.tabs .tab a:hover { 
+			background-color:#b3e5fc; 
+			color:#01579b; 
+			} /*Text color on hover*/ 
+			
+			.tabs .tab a.active { 
+			background-color:#b3e5fc; 
+			color:#01579b; 
+			} /*Background and text color when a tab is active*/ 
+			
+			.tabs .indicator { 
+			background-color:#01579b; 
+			} /*Color of underline*/ 
+		</style>
+	</head>
+	<body>
+		<nav>
+			<div class="nav-wrapper light-blue darken-4">
+				<a href="https://difres.ru" class="brand-logo"><span class='hide-on-med-and-down'>&nbsp&nbsp</span><span class='hide-on-large-only'>М. Задач</span><span class='hide-on-med-and-down'>Менеджер задач</span></a>
+			</div>
+		</nav>
+		
+		<div class='row'>
+			<div class='col s12 m12 xl12 l12'>
+				<div class="card">
+					<div class="card-content">
+						<p>Добро пожаловать, <b>{{username}}</b>!<br>
+							Уровень доступа: <b>Администратор</b><br>
+							<a href='https://difres.ru/logout' class='light-blue-text lighten-4'>Выйти</a>
+						</p>
+					</div>
+					<div class="card-tabs">
+						<ul class="tabs tabs-fixed-width">
+							<li class="tab"><a class="active" href="#test4">Задачи</a></li>
+							<li class="tab"><a href="#test5">Пользователи</a></li>
+						</ul>
+					</div>
+					<div class="card-content grey lighten-4">
+						<div id="test4">Список задач:
+							<a class='light-blue-text darken-4' href='https://difres.ru/admin'>Обновить данные</a>
+							<div class='row hide-on-med-and-down' style='margin-top:15px;'>
+								<div class='col s12 m12 l4 xl4'>
+									<b>Название:</b>
+								</div>
+								<div class='col s12 m12 l4 xl4 center-align'>
+									<b>Кому поручено:</b>
+								</div>
+								<div class='col s12 m12 l4 xl4 right-align'>
+									<b>Статус:</b>
+								</div>
+							</div>
+							<ul class="collection">
+							{% for tname in tasks %}
+							{% if tasks[tname]['status'] == 'not_ready' %}
+								<li class="collection-item">
+									<div class='row'>
+										<div class='col s12 m12 l4 xl4'>
+											{{tname}}
+										</div>
+										<div class='col s12 m12 l4 xl4 center-align hide-on-med-and-down'>
+											<b>{{tasks[tname]['user']}}</b>
+										</div>
+										<div class='col s12 m12 l4 xl4 left-align hide-on-large-only'>
+											<b>{{tasks[tname]['user']}}</b>
+										</div>
+										<div class='col s12 m12 l4 xl4 right-align hide-on-med-and-down'>
+											<span class='red-text'>Не готово</span>
+										</div>
+										<div class='col s12 m12 l4 xl4 left-align hide-on-large-only'>
+											<span class='red-text'>Не готово</span>
+										</div>
+									</div>
+									<div class='row'>
+										<div class='col s12 m12 l12 xl12'>
+											Подробности:<br>
+											{{tasks[tname]['info']}}
+										</div>
+									</div>
+								</li>
+							{% elif tasks[tname]['status'] == 'check' %}
+								<li class="collection-item">
+									<div class='row'>
+										<div class='col s12 m12 l4 xl4'>
+											{{tname}}
+										</div>
+										<div class='col s12 m12 l4 xl4 center-align hide-on-med-and-down'>
+											<b>{{tasks[tname]['user']}}</b>
+										</div>
+										<div class='col s12 m12 l4 xl4 left-align hide-on-large-only'>
+											<b>{{tasks[tname]['user']}}</b>
+										</div>
+										<div class='col s12 m12 l4 xl4 right-align hide-on-med-and-down'>
+											<span class='orange-text'>Требуется проверка</span><br>
+											<a href='https://difres.ru/admin/accept?name={{ tname }}' class='light-blue-text darken-4'>Подтвердить</a>
+										</div>
+										<div class='col s12 m12 l4 xl4 left-align hide-on-large-only'>
+											<span class='orange-text'>Требуется проверка</span>
+											<a href='https://difres.ru/admin/accept?name={{ tname }}' class='light-blue-text darken-4'>Подтвердить</a>
+										</div>
+									</div>
+									<div class='row'>
+										<div class='col s12 m12 l12 xl12'>
+											Подробности:<br>
+											{{tasks[tname]['info']}}
+										</div>
+									</div>
+								</li>
+							{% elif tasks[tname]['status'] == 'done' %}
+								<li class="collection-item">
+									<div class='row'>
+										<div class='col s12 m12 l4 xl4'>
+											{{tname}}
+										</div>
+										<div class='col s12 m12 l4 xl4 center-align hide-on-med-and-down'>
+											<b>{{tasks[tname]['user']}}</b>
+										</div>
+										<div class='col s12 m12 l4 xl4 left-align hide-on-large-only'>
+											<b>{{tasks[tname]['user']}}</b>
+										</div>
+										<div class='col s12 m12 l4 xl4 right-align hide-on-med-and-down'>
+											<span class='green-text darken-4'>Выполнено</span><br>
+										</div>
+										<div class='col s12 m12 l4 xl4 left-align hide-on-large-only'>
+											<span class='green-text darken-4'>Выполнено</span><br>
+										</div>
+									</div>
+									<div class='row'>
+										<div class='col s12 m12 l12 xl12'>
+											Подробности:<br>
+											{{tasks[tname]['info']}}
+										</div>
+									</div>
+								</li>
+							{% endif %}
+							{% endfor %}
+							<a href="https://difres.ru/admin/addtask" class="collection-item light-blue-text darken-4">Добавить задание</a>
+							</ul>
+						</div>
+						<div id="test5">Все сотрудники компании: <a class='light-blue-text darken-4' href='https://difres.ru/admin'>Обновить данные</a>
+							<ul class="collection">
+								{% for i in range(0,lenuserslist,2) %}
+								<li class="collection-item">{{ userslist[i] }}
+									-
+									{% if userslist[i+1] == "admin" %}
+									<b>администратор</b>
+									{% else %}
+									<b>пользователь</b>
+									{% endif %}
+								</li>
+								{% endfor %}
+								<a href="https://difres.ru/admin/adduser" class="collection-item light-blue-text darken-4">Добавить пользователя</a>
+							</ul>
+						</div>
+					</div>
+				</div> 
+			</div>
+		</div>
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+		<script>
+			$(document).ready(function(){
+				$(".tabs").tabs()
+			});
+		</script>
+	</body>
+</html>

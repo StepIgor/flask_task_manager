@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Вход | Менеджер задач</title>
+		<link rel='shortcut icon' href='/templates/favicon.png' type='image/png'>
+		<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+	</head>
+	<body>
+		<nav>
+			<div class="nav-wrapper light-blue darken-4">
+				<a href="#" class="brand-logo"><span class='hide-on-med-and-down'>&nbsp&nbsp</span><span class='hide-on-large-only'>М. Задач</span><span class='hide-on-med-and-down'>Менеджер задач</span></a>
+			</div>
+		</nav>
+		<div class='container'>
+			<div class='row'>
+				<div class='col s12 m12 l12 xl12'>
+					<div class='card-panel grey lighten-4 center-align'>
+						<h5>Войти в аккаунт:</h5>
+						<div class='divider'></div>
+						<div style='margin-top:25px;'>
+							<form method='POST' novalidate>
+								{{form.hidden_tag()}}
+								<div class='row center-align'>
+									<div class='col s0 m0 l3 xl3'>
+										
+									</div>
+									<div class='col s12 m12 l6 xl6'>
+										<div class='input-field'>
+											<i class='material-icons prefix'>account_circle</i>
+											{{form.username.label}}
+											{{form.username(size=32)}}
+										</div>
+									</div>
+								</div>
+								<div class='row center-align'>
+									<div class='col s0 m0 l3 xl3'>
+										
+									</div>
+									<div class='col s12 m12 l6 xl6' style='margin-top:-25px;'>
+										<div class='input-field'>
+											<i class='material-icons prefix'>https</i>
+											{{form.password.label}}
+											{{form.password(size=32)}}
+										</div>
+									</div>
+								</div>
+								<div class='row'>
+									<div class='col s0 m0 l3 xl3'>
+										
+									</div>
+									<div class='col s12 m12 l6 xl6' style='margin-top:-10px;'>
+										<button class="btn waves-effect waves-light blue darken-4" type="submit" name="submit">Войти
+											<i class="material-icons right">arrow_forward</i>
+										</button>
+									</div>
+								</div>
+								<div class='row'>
+									<div class='col s12 m12 xl12 l12 center-align'>
+										{% with messages=get_flashed_messages()%}
+										{% if messages %}
+										{% for message in messages %}
+										<span class='red-text'>{{message}}</span>
+										{% endfor %}
+										{% endif %}
+										{% endwith %}
+										{% for error in form.username.errors %}
+										<span class='red-text'>Поле с логином не может быть пустым!</span><br>
+										{% endfor %}
+										{% for error in form.password.errors %}
+										<span class='red-text'>Поле с паролем не может быть пустым!</span>
+										{% endfor %}
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					</div>
+					</div>
+					<div class='row'>
+				<div class='col s12 m12 l12 xl12 center-align grey-text'>
+					By Igor Stepanov - GitHub: https://github.com/StepIgor
+				</div>
+			</div>
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+	</body>
+</html>
