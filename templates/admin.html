@@ -66,18 +66,18 @@
 								</div>
 							</div>
 							<ul class="collection">
-							{% for tname in tasks %}
-							{% if tasks[tname]['status'] == 'not_ready' %}
+							{% for item in task %}
+							{% if item.status == 'not_ready' %}
 								<li class="collection-item">
 									<div class='row'>
 										<div class='col s12 m12 l4 xl4'>
-											{{tname}}
+											{{item.taskname}}
 										</div>
 										<div class='col s12 m12 l4 xl4 center-align hide-on-med-and-down'>
-											<b>{{tasks[tname]['user']}}</b>
+											<b>{{item.foruser}}</b>
 										</div>
 										<div class='col s12 m12 l4 xl4 left-align hide-on-large-only'>
-											<b>{{tasks[tname]['user']}}</b>
+											<b>{{item.foruser}}</b>
 										</div>
 										<div class='col s12 m12 l4 xl4 right-align hide-on-med-and-down'>
 											<span class='red-text'>Не готово</span>
@@ -89,49 +89,49 @@
 									<div class='row'>
 										<div class='col s12 m12 l12 xl12'>
 											Подробности:<br>
-											{{tasks[tname]['info']}}
+											{{item.info}}
 										</div>
 									</div>
 								</li>
-							{% elif tasks[tname]['status'] == 'check' %}
+							{% elif item.status == 'check' %}
 								<li class="collection-item">
 									<div class='row'>
 										<div class='col s12 m12 l4 xl4'>
-											{{tname}}
+											{{item.taskname}}
 										</div>
 										<div class='col s12 m12 l4 xl4 center-align hide-on-med-and-down'>
-											<b>{{tasks[tname]['user']}}</b>
+											<b>{{item.foruser}}</b>
 										</div>
 										<div class='col s12 m12 l4 xl4 left-align hide-on-large-only'>
-											<b>{{tasks[tname]['user']}}</b>
+											<b>{{item.foruser}}</b>
 										</div>
 										<div class='col s12 m12 l4 xl4 right-align hide-on-med-and-down'>
 											<span class='orange-text'>Требуется проверка</span><br>
-											<a href='https://difres.ru/admin/accept?name={{ tname }}' class='light-blue-text darken-4'>Подтвердить</a>
+											<a href='https://difres.ru/admin/accept?name={{ item.taskname }}' class='light-blue-text darken-4'>Подтвердить</a>
 										</div>
 										<div class='col s12 m12 l4 xl4 left-align hide-on-large-only'>
 											<span class='orange-text'>Требуется проверка</span>
-											<a href='https://difres.ru/admin/accept?name={{ tname }}' class='light-blue-text darken-4'>Подтвердить</a>
+											<a href='https://difres.ru/admin/accept?name={{ item.taskname }}' class='light-blue-text darken-4'>Подтвердить</a>
 										</div>
 									</div>
 									<div class='row'>
 										<div class='col s12 m12 l12 xl12'>
 											Подробности:<br>
-											{{tasks[tname]['info']}}
+											{{item.info}}
 										</div>
 									</div>
 								</li>
-							{% elif tasks[tname]['status'] == 'done' %}
+							{% elif item.status == 'done' %}
 								<li class="collection-item">
 									<div class='row'>
 										<div class='col s12 m12 l4 xl4'>
-											{{tname}}
+											{{item.taskname}}
 										</div>
 										<div class='col s12 m12 l4 xl4 center-align hide-on-med-and-down'>
-											<b>{{tasks[tname]['user']}}</b>
+											<b>{{item.foruser}}</b>
 										</div>
 										<div class='col s12 m12 l4 xl4 left-align hide-on-large-only'>
-											<b>{{tasks[tname]['user']}}</b>
+											<b>{{item.foruser}}</b>
 										</div>
 										<div class='col s12 m12 l4 xl4 right-align hide-on-med-and-down'>
 											<span class='green-text darken-4'>Выполнено</span><br>
@@ -143,7 +143,7 @@
 									<div class='row'>
 										<div class='col s12 m12 l12 xl12'>
 											Подробности:<br>
-											{{tasks[tname]['info']}}
+											{{item.info}}
 										</div>
 									</div>
 								</li>
@@ -154,10 +154,10 @@
 						</div>
 						<div id="test5">Все сотрудники компании: <a class='light-blue-text darken-4' href='https://difres.ru/admin'>Обновить данные</a>
 							<ul class="collection">
-								{% for i in range(0,lenuserslist,2) %}
-								<li class="collection-item">{{ userslist[i] }}
+								{% for item in data %}
+								<li class="collection-item">{{ item.username }}
 									-
-									{% if userslist[i+1] == "admin" %}
+									{% if item.level == "admin" %}
 									<b>администратор</b>
 									{% else %}
 									<b>пользователь</b>

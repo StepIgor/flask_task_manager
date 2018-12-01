@@ -3,12 +3,18 @@ from flask import render_template,flash,redirect,session,request,jsonify
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import json
 application = Flask(__name__)
 
 application.config['SECRET_KEY'] = "something"
+application.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://login:password@ip/basename'
 
-	
+db = SQLAlchemy(application)
+
+migrate = Migrate(application,db)
+
 class LoginForm(FlaskForm):
 	username = StringField('Логин', validators=[DataRequired()])
 	password = PasswordField('Пароль', validators=[DataRequired()])
@@ -26,6 +32,26 @@ class AddTaskForm(FlaskForm):
 	info = StringField('Подробности', validators=[DataRequired()])
 	addtasknow = SubmitField('Добавить')
 
+class data(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	username = db.Column(db.String(64), index=True, unique=True)
+	password = db.Column(db.String(64))
+	level = db.Column(db.String(5))
+
+	def __init__(self, *args, **kwargs):
+		super(data,self).__init__(*args,**kwargs)
+		
+class task(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	taskname = db.Column(db.String(64), index=True, unique=True)
+	foruser = db.Column(db.String(32))
+	status = db.Column(db.String(10))
+	info = db.Column(db.String(128))
+	
+	def __init__(self, *args, **kwargs):
+		super(task,self).__init__(*args,**kwargs)
+		
+
 @application.route("/", methods=['GET','POST'])
 
 def hello():
@@ -37,30 +63,25 @@ def hello():
 	
 	logform = LoginForm()
 	
-	data = {}
-	
 	if logform.validate_on_submit():
 		if session.get('logged',None) == 1:
 			return redirect('https://difres.ru/account')
-		with open('data/data.json','r') as f:
-			data = json.load(f)
-		if logform.username.data.lower() in list(data.keys()):
-			if data[logform.username.data.lower()]['password'] == logform.password.data.lower():
-				session['logged'] = 1
+		user = data.query.filter_by(username=logform.username.data).first()
+		if not user is None:
+			if logform.password.data == user.password:
 				session['username'] = logform.username.data.lower()
-				session['level'] = data[logform.username.data.lower()]['level']
-				if session.get("level",None) == "user":
-					return redirect('https://difres.ru/account')
-				else:
+				session['logged'] = 1
+				session['level'] = user.level
+				if user.level == "admin":
 					return redirect('https://difres.ru/admin')
+				else:
+					return redirect('https://difres.ru/account')
 			else:
 				flash('Неправильный пароль!')
-				return redirect('https://difres.ru')
 		else:
 			flash('Аккаунта с таким логином нет!')
-			return redirect('https://difres.ru')
 		return redirect('https://difres.ru')
-#
+	
 	return render_template('index.html',form=logform)
    
 @application.route("/account")
@@ -70,18 +91,8 @@ def account():
 		return redirect('https://difres.ru')
 	if session.get("level",None) != "user":
 		return redirect("https://difres.ru/admin")
-		
-	tasks = {}
-	data = {}
 	
-	with open('data/data.json','r') as f:
-		data = json.load(f)
-		
-	with open('data/task.json','r') as f:
-		tasks = json.load(f)
-		
-	
-	return render_template('account.html',username=session.get('username',None),tasks=tasks,data=data)
+	return render_template('account.html',username=session.get('username',None),tasks=task.query.all())
 	
 @application.route("/admin")
 	
@@ -91,23 +102,7 @@ def admin():
 	if session.get("level",None) != "admin":
 		return redirect("https://difres.ru/account")
 		
-	tasks = {}
-	data = {}
-	userslist = []
-	
-	with open('data/data.json','r') as f:
-		data = json.load(f)
-		
-	with open('data/task.json','r') as f:
-		tasks = json.load(f)
-		
-	for key in list(data.keys()):
-		userslist.extend([key,data[key]['level']])
-		
-	lenuserslist = len(userslist)
-	
-		
-	return render_template('admin.html',username=session.get('username',None),data=data,userslist=userslist,lenuserslist=lenuserslist,tasks=tasks)
+	return render_template('admin.html',username=session.get('username',None),task=task.query.all(),data=data.query.all())
 	
 @application.route("/logout")
 def logout():
@@ -123,28 +118,21 @@ def adduser():
 		
 	adduserformsend = AddUserForm()
 	
-	data = {}
-	
-	with open('data/data.json','r') as f:
-		data = json.load(f)
-	
 	if adduserformsend.validate_on_submit():
-		if not adduserformsend.name.data.lower() in list(data.keys()):
+		test = data.query.filter_by(username=adduserformsend.name.data).first()
+		if test is None:
 			if adduserformsend.isadmin.data:
-				pass
-				data.update({adduserformsend.name.data.lower():{'password':adduserformsend.password.data.lower(),'level':'admin'}})
+				newuser = data(username=adduserformsend.name.data,password=adduserformsend.password.data,level='admin')
 			else:
-				pass
-				data.update({adduserformsend.name.data.lower():{'password':adduserformsend.password.data.lower(),'level':'user'}})
-			with open('data/data.json','w') as f:
-				json.dump(data,f)
+				newuser = data(username=adduserformsend.name.data,password=adduserformsend.password.data,level='user')
+			db.session.add(newuser)
+			db.session.commit()
 			return redirect('https://difres.ru/admin')
 		else:
-			flash('Аккаунт с таким логином уже существует.')
-			return redirect('https://difres.ru/admin/adduser')
-		
+			flash('Такой пользователь уже есть!')
 		return redirect('https://difres.ru/admin/adduser')
-		
+
+
 	return render_template('adduser.html',adduserform=adduserformsend)
 	
 @application.route("/admin/addtask",methods=['GET','POST'])
@@ -157,23 +145,19 @@ def addtask():
 	
 	addtaskform = AddTaskForm()
 	
-	data = {}
-	tasks = {}
-	
-	with open('data/data.json','r') as f:
-		data = json.load(f)
-	
-	with open('data/task.json','r') as f:
-		tasks = json.load(f)
-	
 	if addtaskform.validate_on_submit():
-		if addtaskform.foruser.data.lower() in list(data.keys()):
-			tasks.update({addtaskform.name.data:{'user':addtaskform.foruser.data.lower(),'status':'not_ready','info':addtaskform.info.data}})
-			with open('data/task.json','w') as f:
-				json.dump(tasks,f)
-			return redirect('https://difres.ru/admin')
+		test = task.query.filter_by(taskname=addtaskform.name.data).first()
+		if test is None:
+			test = data.query.filter_by(username=addtaskform.foruser.data).first()
+			if not test is None:
+				newtask = task(taskname=addtaskform.name.data,foruser=addtaskform.foruser.data,status='not_ready',info=addtaskform.info.data)
+				db.session.add(newtask)
+				db.session.commit()
+				return redirect('https://difres.ru/admin')
+			else:
+				flash('Такого пользователя не существует!')
 		else:
-			flash('Пользователь, которому вы пытаетесь поручить задание, не существует.')
+			flash('Задание с таким названием уже есть!')
 		return redirect('https://difres.ru/admin/addtask')
 	
 	return render_template('addtask.html',addtaskform=addtaskform)
@@ -185,16 +169,13 @@ def done():
 	if session.get("level",None) != "user":
 		return redirect("https://difres.ru/admin")
 	args = request.args.to_dict()
-	tasks = {}
-	with open('data/task.json','r') as f:
-		tasks = json.load(f)
-	if args['name'] in list(tasks.keys()) and tasks[args['name']]['status'] == "not_ready":
-		tasks[args['name']]['status'] = 'check'
-		with open('data/task.json','w') as f:
-			json.dump(tasks,f)
-		return redirect('https://difres.ru/account')
-	else:
-		redirect('https://difres.ru/account')
+	
+	donetask = task.query.filter_by(taskname=args['name']).first()
+	
+	if not donetask is None:
+		donetask.status = 'check'
+		db.session.commit()
+	
 	return redirect('https://difres.ru/account')
 	
 @application.route("/admin/accept")
@@ -204,15 +185,12 @@ def admindone():
 	if session.get("level",None) != "admin":
 		return redirect("https://difres.ru/account")
 	args = request.args.to_dict()
-	tasks = {}
-	with open('data/task.json','r') as f:
-		tasks = json.load(f)
-	if args['name'] in list(tasks.keys()) and tasks[args['name']]['status'] == "check":
-		tasks[args['name']]['status'] = 'done'
-		with open('data/task.json','w') as f:
-			json.dump(tasks,f)
-		return redirect('https://difres.ru/admin')
-	else:
-		redirect('https://difres.ru/admin')
+	
+	accepttask = task.query.filter_by(taskname=args['name']).first()
+	
+	if not accepttask is None:
+		accepttask.status = 'done'
+		db.session.commit()
+	
 	return redirect('https://difres.ru/admin')
 	

@@ -63,34 +63,34 @@
 								</div>
 							</div>
 							<ul class="collection">
-							{% for tname in tasks %}
-							{% if tasks[tname]['status'] == 'not_ready' and tasks[tname]['user'] == session.get('username',None) %}
+							{% for item in tasks %}
+							{% if item.status == 'not_ready' and item.foruser == session.get('username',None) %}
 								<li class="collection-item">
 									<div class='row'>
 										<div class='col s12 m12 l6 xl6'>
-											{{tname}}
+											{{item.taskname}}
 										</div>
 										<div class='col s12 m12 l6 xl6 right-align hide-on-med-and-down'>
 											<span class='red-text'>Не готово</span><br>
-											<a href='https://difres.ru/account/done?name={{ tname }}' class='light-blue-text lighten-4'>Завершить</a>
+											<a href='https://difres.ru/account/done?name={{ item.taskname }}' class='light-blue-text lighten-4'>Завершить</a>
 										</div>
 										<div class='col s12 m12 l6 xl6 left-align hide-on-large-only'>
 											<span class='red-text'>Не готово</span><br>
-											<a href='https://difres.ru/account/done?name={{ tname }}' class='light-blue-text lighten-4'>Завершить</a>
+											<a href='https://difres.ru/account/done?name={{ item.taskname }}' class='light-blue-text lighten-4'>Завершить</a>
 										</div>
 									</div>
 									<div class='row'>
 										<div class='col s12 m12 l12 xl12'>
 											Подробности:<br>
-											{{tasks[tname]['info']}}
+											{{item.info}}
 										</div>
 									</div>
 								</li>
-							{% elif tasks[tname]['status'] == 'check' and tasks[tname]['user'] == session.get('username',None) %}
+							{% elif item.status == 'check' and item.foruser == session.get('username',None) %}
 								<li class="collection-item">
 									<div class='row'>
 										<div class='col s12 m12 l6 xl6'>
-											{{tname}}
+											{{item.taskname}}
 										</div>
 										<div class='col s12 m12 l6 xl6 right-align hide-on-med-and-down'>
 											<span class='orange-text'>На проверке</span><br>
@@ -102,15 +102,15 @@
 									<div class='row'>
 										<div class='col s12 m12 l12 xl12'>
 											Подробности:<br>
-											{{tasks[tname]['info']}}
+											{{item.info}}
 										</div>
 									</div>
 								</li>
-							{% elif tasks[tname]['status'] == 'done' and tasks[tname]['user'] == session.get('username',None) %}
+							{% elif item.status == 'done' and item.foruser == session.get('username',None) %}
 								<li class="collection-item">
 									<div class='row'>
 										<div class='col s12 m12 l6 xl6'>
-											{{tname}}
+											{{item.taskname}}
 										</div>
 										<div class='col s12 m12 l6 xl6 right-align hide-on-med-and-down'>
 											<span class='green-text darken-4'>Выполнено</span><br>
@@ -122,7 +122,7 @@
 									<div class='row'>
 										<div class='col s12 m12 l12 xl12'>
 											Подробности:<br>
-											{{tasks[tname]['info']}}
+											{{item.info}}
 										</div>
 									</div>
 								</li>
