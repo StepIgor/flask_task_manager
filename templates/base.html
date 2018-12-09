@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{title}} | Менеджер задач</title>
+		<link rel='shortcut icon' href='/templates/favicon.png' type='image/png'>
+		<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+		<style>
+		.tabs .tab a{ 
+		  color:#01579b; 
+		 } /*Black color to the text*/ 
+
+		 .tabs .tab a:hover { 
+		  background-color:#e1f5fe; 
+		  color:#01579b; 
+		 } /*Text color on hover*/ 
+
+		 .tabs .tab a.active { 
+		  background-color:#e1f5fe; 
+		  color:#01579b; 
+		 } /*Background and text color when a tab is active*/ 
+
+		 .tabs .indicator { 
+		  background-color:#01579b; 
+		 } /*Color of underline*/ 
+		 
+		 .tabs .tab a:focus, .tabs .tab a:focus.active {
+		   background-color: #e1f5fe;
+	       outline: none;
+		 }
+		</style>
+	</head>
+	<body>
+		<nav>
+			<div class="nav-wrapper light-blue darken-4">
+				<a href="#" class="brand-logo"><span class='hide-on-med-and-down'>&nbsp&nbsp</span><span class='hide-on-large-only'>М. Задач</span><span class='hide-on-med-and-down'>Менеджер задач</span></a>
+			</div>
+		</nav>
+		
+		{% block content %}
+		
+		{% endblock %}
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+	</body>
+</html>
